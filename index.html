@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pembelajaran Algoritma & Pemrograman - 5 Kasus Terpadu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .flowchart-node {
+            transition: all 0.3s ease;
+        }
+        .flowchart-node.active {
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.7);
+            border-color: #0284c7 !important;
+            transform: scale(1.03);
+        }
+        .flowchart-node.passed {
+            border-color: #10b981 !important;
+            background-color: #f0fdf4 !important;
+            color: #166534 !important;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .tab-btn.active-tab {
+            background-color: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased flex flex-col">
+
+    <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/80 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-sky-500 to-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-code-branch text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white leading-tight">AlgoSim<span class="text-sky-400">Lab</span></h1>
+                    <p class="text-xs text-slate-400">Interaktif Pemrograman & Algoritma (5 Kasus)</p>
+                </div>
+            </div>
+
+            <!-- Main Tab Navigation -->
+            <nav class="flex space-x-1 overflow-x-auto py-1 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/60 custom-scroll max-w-full">
+                <button onclick="switchKasus(1)" id="btn-kasus-1" class="tab-btn active-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all duration-200">
+                    <i class="fa-solid fa-graduation-cap mr-1"></i> Kasus 1: Kelulusan
+                </button>
+                <button onclick="switchKasus(2)" id="btn-kasus-2" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white whitespace-nowrap transition-all duration-200">
+                    <i class="fa-solid fa-credit-card mr-1"></i> Kasus 2: ATM
+                </button>
+                <button onclick="switchKasus(3)" id="btn-kasus-3" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white whitespace-nowrap transition-all duration-200">
+                    <i class="fa-solid fa-calculator mr-1"></i> Kasus 3: Kelereng
+                </button>
+                <button onclick="switchKasus(4)" id="btn-kasus-4" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white whitespace-nowrap transition-all duration-200">
+                    <i class="fa-solid fa-square-parking mr-1"></i> Kasus 4: Tarif Parkir
+                </button>
+                <button onclick="switchKasus(5)" id="btn-kasus-5" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white whitespace-nowrap transition-all duration-200">
+                    <i class="fa-solid fa-cash-register mr-1"></i> Kasus 5: Kasir Resto
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-800 border border-sky-500 text-sky-200 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-sky-400 text-lg"></i>
+            <span id="toast-message" class="text-xs font-medium">Pesan notifikasi...</span>
+        </div>
+    </div>
+
+    <!-- Main Content Body -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <section id="kasus-1-content" class="kasus-section space-y-6">
+            <!-- Header Banner -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-4">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-semibold mb-2">
+                            <span>KASUS 1</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Penentuan Kelulusan Mahasiswa</h2>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                            Menghitung Nilai Akhir = (30% Tugas) + (30% UTS) + (40% UAS). LULUS jika Nilai Akhir &ge; 60.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Input Controls -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/50">
+                        <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">Nilai Tugas (30%)</label>
+                        <input type="number" id="k1-tugas" value="80" min="0" max="100" oninput="calculateKasus1()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/50">
+                        <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">Nilai UTS (30%)</label>
+                        <input type="number" id="k1-uts" value="70" min="0" max="100" oninput="calculateKasus1()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/50">
+                        <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">Nilai UAS (40%)</label>
+                        <input type="number" id="k1-uas" value="50" min="0" max="100" oninput="calculateKasus1()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+
+                <!-- Result Status Box -->
+                <div id="k1-result-box" class="mt-4 p-4 rounded-xl border flex items-center justify-between transition-all duration-300 bg-emerald-950/40 border-emerald-500/40">
+                    <div>
+                        <div class="text-xs uppercase text-slate-400 font-semibold">Hasil Perhitungan Nilai Akhir</div>
+                        <div class="text-2xl font-extrabold text-white font-mono mt-0.5">
+                            <span id="k1-nilai-akhir">65.0</span> / 100
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span id="k1-status-badge" class="px-4 py-2 rounded-xl text-sm font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                            LULUS
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Panels for Kasus 1: Flowchart, Pseudocode, Narasi, Python -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Flowchart Viewer -->
+                <div class="lg:col-span-6 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                    <h3 class="font-bold text-slate-200 flex items-center mb-4">
+                        <i class="fa-solid fa-diagram-project text-sky-400 mr-2"></i> Flowchart Diagram Alir
+                    </h3>
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/70 overflow-x-auto flex justify-center py-6">
+                        <div class="w-full max-w-sm flex flex-col items-center space-y-2.5 font-sans text-xs">
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-emerald-500 rounded-full text-center font-bold text-emerald-400">MULAI</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2.5 bg-slate-800 border-2 border-slate-600 rounded-xl text-center">
+                                <span class="text-sky-300 font-semibold">Input:</span> Tugas, UTS, UAS
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-64 p-2.5 bg-slate-800 border-2 border-slate-600 rounded-xl text-center font-mono">
+                                Nilai Akhir = (0.3*Tugas) + (0.3*UTS) + (0.4*UAS)
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-3 bg-amber-950/40 border-2 border-amber-500/60 rounded-xl text-center font-semibold text-amber-300">
+                                Apakah Nilai Akhir &ge; 60?
+                            </div>
+                            <div class="w-full flex justify-around text-[11px] text-slate-400 py-1">
+                                <span><i class="fa-solid fa-arrow-left text-emerald-400"></i> YA</span>
+                                <span>TIDAK <i class="fa-solid fa-arrow-right text-rose-400"></i></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 w-full">
+                                <div class="p-2.5 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 font-bold">
+                                    Status = LULUS
+                                </div>
+                                <div class="p-2.5 bg-rose-950/40 border border-rose-500/50 rounded-xl text-center text-rose-300 font-bold">
+                                    Status = TIDAK LULUS
+                                </div>
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2.5 bg-slate-800 border-2 border-purple-500/60 rounded-xl text-center text-purple-300">
+                                Tampilkan Nilai Akhir & Status
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-rose-500 rounded-full text-center font-bold text-rose-400">SELESAI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pseudocode & Narasi -->
+                <div class="lg:col-span-6 space-y-6">
+                    <!-- Pseudocode Box -->
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-sky-400 text-sm uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-code mr-2"></i> Algoritma / Pseudocode
+                            </h3>
+                            <button onclick="copyToClipboard('k1-pseudocode-text')" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2.5 py-1 rounded transition">
+                                <i class="fa-regular fa-copy mr-1"></i> Salin
+                            </button>
+                        </div>
+                        <pre id="k1-pseudocode-text" class="bg-slate-900 p-4 rounded-xl text-xs font-mono text-emerald-300 leading-relaxed border border-slate-700 custom-scroll overflow-x-auto">
+ALGORITMA Penentuan_Kelulusan_Mahasiswa
+DEKLARASI:
+    tugas, uts, uas, nilai_akhir : REAL
+    status : STRING
+
+ALGORITMA:
+    INPUT tugas, uts, uas
+    
+    nilai_akhir &leftarrow; (0.3 * tugas) + (0.3 * uts) + (0.4 * uas)
+    
+    IF nilai_akhir &ge; 60 THEN
+        status &leftarrow; "LULUS"
+    ELSE
+        status &leftarrow; "TIDAK LULUS"
+    ENDIF
+    
+    OUTPUT nilai_akhir, status</pre>
+                    </div>
+
+                    <!-- Narasi Deskripsi -->
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <h3 class="font-bold text-amber-400 text-sm uppercase tracking-wider flex items-center mb-3">
+                            <i class="fa-solid fa-align-left mr-2"></i> Penjelasan Deskripsi Narasi
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed space-y-2">
+                            Program diawali dengan menerima input tiga komponen nilai dari mahasiswa, yaitu <strong class="text-white">Nilai Tugas</strong>, <strong class="text-white">Nilai UTS</strong>, dan <strong class="text-white">Nilai UAS</strong>. Selanjutnya, sistem menghitung <strong class="text-white">Nilai Akhir</strong> secara otomatis berdasarkan bobot persentase masing-masing (30% Tugas, 30% UTS, dan 40% UAS).
+                            <br><br>
+                            Setelah nilai akhir diperoleh, program menguji kondisi keputusan: apakah nilai akhir tersebut mencapai batas minimal <strong class="text-white">60</strong>. Jika memenuhi syarat (&ge; 60), mahasiswa dinyatakan <span class="text-emerald-400 font-bold">LULUS</span>. Sebaliknya jika kurang dari 60, mahasiswa dinyatakan <span class="text-rose-400 font-bold">TIDAK LULUS</span>. Terakhir, sistem menampilkan nilai akhir beserta status kelulusan tersebut kepada pengguna.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kasus-2-content" class="kasus-section hidden space-y-6">
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-4">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
+                            <span>KASUS 2</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Simulasi Penarikan Uang Mesin ATM</h2>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                            Pemeriksaan verifikasi PIN, verifikasi kecukupan saldo, dan pengurangan saldo rekening.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive ATM Simulator -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-700 space-y-4">
+                        <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
+                            <span>REKENING SIMULASI</span>
+                            <span class="font-mono text-emerald-400 font-bold">PIN Benar: 123456</span>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">Masukkan PIN ATM</label>
+                            <input type="password" id="k2-pin-input" value="123456" maxlength="6" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono tracking-widest text-lg focus:outline-none focus:border-sky-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Saldo Rekening</label>
+                                <input type="number" id="k2-saldo-input" value="1000000" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Jumlah Tarik (Rp)</label>
+                                <input type="number" id="k2-tarik-input" value="300000" step="50000" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-sky-500">
+                            </div>
+                        </div>
+
+                        <button onclick="simulasikanATM()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-600/20">
+                            <i class="fa-solid fa-money-bill-transfer mr-1"></i> Proses Penarikan Uang
+                        </button>
+                    </div>
+
+                    <!-- ATM Screen Display -->
+                    <div id="k2-screen-display" class="bg-slate-950 p-5 rounded-2xl border border-emerald-500/30 font-mono text-xs flex flex-col justify-between min-h-[220px]">
+                        <div>
+                            <div class="text-emerald-400 font-bold border-b border-slate-800 pb-2 mb-3 flex justify-between">
+                                <span>[ MESIN ATM SIMULATOR ]</span>
+                                <span class="animate-pulse">&bull; ONLINE</span>
+                            </div>
+                            <div id="k2-screen-log" class="text-slate-300 space-y-1.5">
+                                <div>> Masukkan PIN untuk memulai...</div>
+                            </div>
+                        </div>
+                        <div id="k2-saldo-info" class="pt-3 border-t border-slate-800 text-right text-slate-400 text-[11px]">
+                            Sisa Saldo Rekening: <strong class="text-white font-mono" id="k2-display-sisa-saldo">Rp 1.000.000</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flowchart, Pseudocode, Narasi -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                    <h3 class="font-bold text-slate-200 flex items-center mb-4">
+                        <i class="fa-solid fa-diagram-project text-sky-400 mr-2"></i> Flowchart Penarikan ATM
+                    </h3>
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/70 overflow-x-auto flex justify-center py-6">
+                        <div class="w-full max-w-sm flex flex-col items-center space-y-2.5 font-sans text-xs">
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-emerald-500 rounded-full text-center font-bold text-emerald-400">MULAI</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2.5 bg-slate-800 border-2 border-slate-600 rounded-xl text-center">
+                                Input: PIN Nasabah
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-3 bg-amber-950/40 border-2 border-amber-500/60 rounded-xl text-center font-semibold text-amber-300">
+                                Apakah PIN Benar?
+                            </div>
+                            <div class="text-xs text-rose-400">TIDAK &rarr; Tampilkan "PIN Salah" &rarr; [SELESAI]</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i> YA</div>
+                            <div class="w-56 p-2.5 bg-slate-800 border-2 border-slate-600 rounded-xl text-center">
+                                Input: Jumlah Penarikan
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-60 p-3 bg-amber-950/40 border-2 border-amber-500/60 rounded-xl text-center font-semibold text-amber-300">
+                                Apakah Saldo &ge; Jumlah Tarik?
+                            </div>
+                            <div class="w-full flex justify-around text-[11px] text-slate-400 py-1">
+                                <span><i class="fa-solid fa-arrow-left text-emerald-400"></i> YA</span>
+                                <span>TIDAK <i class="fa-solid fa-arrow-right text-rose-400"></i></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 w-full">
+                                <div class="p-2.5 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 text-[11px]">
+                                    Saldo = Saldo - Tarik<br>Keluarkan Uang
+                                </div>
+                                <div class="p-2.5 bg-rose-950/40 border border-rose-500/50 rounded-xl text-center text-rose-300 text-[11px]">
+                                    Pesan: "Saldo Tidak Mencukupi"
+                                </div>
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-rose-500 rounded-full text-center font-bold text-rose-400">SELESAI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-sky-400 text-sm uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-code mr-2"></i> Algoritma / Pseudocode
+                            </h3>
+                            <button onclick="copyToClipboard('k2-pseudocode-text')" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2.5 py-1 rounded transition">
+                                <i class="fa-regular fa-copy mr-1"></i> Salin
+                            </button>
+                        </div>
+                        <pre id="k2-pseudocode-text" class="bg-slate-900 p-4 rounded-xl text-xs font-mono text-emerald-300 leading-relaxed border border-slate-700 custom-scroll overflow-x-auto">
+ALGORITMA Penarikan_Uang_ATM
+DEKLARASI:
+    pin_input, pin_benar : INTEGER
+    saldo, jumlah_tarik : REAL
+
+ALGORITMA:
+    pin_benar &leftarrow; 123456
+    saldo &leftarrow; 1000000
+    
+    INPUT pin_input
+    
+    IF pin_input == pin_benar THEN
+        INPUT jumlah_tarik
+        
+        IF jumlah_tarik &le; saldo THEN
+            saldo &leftarrow; saldo - jumlah_tarik
+            OUTPUT "Uang berhasil ditarik."
+            OUTPUT "Sisa saldo: ", saldo
+        ELSE
+            OUTPUT "Saldo Tidak Mencukupi"
+        ENDIF
+    ELSE
+        OUTPUT "PIN Salah. Transaksi Dibatalkan."
+    ENDIF</pre>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <h3 class="font-bold text-amber-400 text-sm uppercase tracking-wider flex items-center mb-3">
+                            <i class="fa-solid fa-align-left mr-2"></i> Penjelasan Deskripsi Narasi
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed space-y-2">
+                            Proses penarikan uang diawali dengan autentikasi keamanan berupa verifikasi <strong class="text-white">PIN nasabah</strong>. Sistem memeriksa apakah PIN yang dimasukkan cocok dengan data PIN rekening. Jika PIN salah, sistem membatalkan transaksi demi keamanan.
+                            <br><br>
+                            Jika PIN benar, sistem membuka menu penarikan dan meminta nasabah menginputkan <strong class="text-white">Jumlah Uang yang Ingin Ditarik</strong>. Sistem selanjutnya memeriksa kecukupan saldo (apabila jumlah penarikan &le; saldo rekening). Jika saldo mencukupi, uang dikeluarkan, saldo berkurang otomatis, dan sisa saldo ditampilkan. Jika saldo kurang, sistem membatalkan pengeluaran uang dan menampilkan peringatan <span class="text-rose-400 font-bold">"Saldo Tidak Mencukupi"</span>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kasus-3-content" class="kasus-section hidden space-y-6">
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-2">
+                            <span>KASUS 3</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Kalkulator Kelereng Aldi, Budi, Anto & Agung</h2>
+                        <p class="text-slate-400 text-sm mt-1">Perhitungan kelereng berantai berdasarkan input jumlah kelereng Aldi secara real-time.</p>
+                    </div>
+
+                    <!-- Aldi Marble Slider -->
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 min-w-[280px]">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-bold text-slate-300">KELERENG ALDI (A):</label>
+                            <span id="aldi-display" class="font-mono text-lg font-bold text-sky-400">30</span>
+                        </div>
+                        <input type="range" id="aldi-slider" min="0" max="100" value="30" oninput="calculateMarbles()" class="w-full accent-sky-500 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-slate-900/80 border border-sky-500/30 rounded-xl p-4 shadow-lg">
+                        <div class="text-xs text-sky-400 font-bold uppercase">Aldi (Input)</div>
+                        <div id="m-aldi" class="text-3xl font-extrabold text-white font-mono my-1">30</div>
+                        <div class="text-[11px] text-slate-400 font-mono">A = <span class="val-aldi-formula text-sky-300">30</span></div>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-emerald-500/30 rounded-xl p-4 shadow-lg">
+                        <div class="text-xs text-emerald-400 font-bold uppercase">Budi</div>
+                        <div id="m-budi" class="text-3xl font-extrabold text-white font-mono my-1">15</div>
+                        <div class="text-[11px] text-slate-400 font-mono">B = A - 15</div>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-purple-500/30 rounded-xl p-4 shadow-lg">
+                        <div class="text-xs text-purple-400 font-bold uppercase">Anto</div>
+                        <div id="m-anto" class="text-3xl font-extrabold text-white font-mono my-1">90</div>
+                        <div class="text-[11px] text-slate-400 font-mono">An = 2 &times; (A + B)</div>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-rose-500/30 rounded-xl p-4 shadow-lg">
+                        <div class="text-xs text-rose-400 font-bold uppercase">Agung</div>
+                        <div id="m-agung" class="text-3xl font-extrabold text-white font-mono my-1">130</div>
+                        <div class="text-[11px] text-slate-400 font-mono">Ag = (A + B + An) - 5</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flowchart, Pseudocode, Narasi -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                    <h3 class="font-bold text-slate-200 flex items-center mb-4">
+                        <i class="fa-solid fa-diagram-project text-sky-400 mr-2"></i> Flowchart Kelereng
+                    </h3>
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/70 overflow-x-auto flex justify-center py-6">
+                        <div class="w-full max-w-sm flex flex-col items-center space-y-2 font-sans text-xs">
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-emerald-500 rounded-full text-center font-bold text-emerald-400">MULAI</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center">Input Jumlah Kelereng Aldi (A)</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-60 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center font-mono">Budi = A - 15</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-60 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center font-mono">Anto = 2 * (A + Budi)</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-64 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center font-mono">Agung = (A + Budi + Anto) - 5</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-60 p-2 bg-slate-800 border-2 border-purple-500/60 rounded-xl text-center text-purple-300">Tampilkan Kelereng Budi, Anto, Agung</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-rose-500 rounded-full text-center font-bold text-rose-400">SELESAI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-sky-400 text-sm uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-code mr-2"></i> Algoritma / Pseudocode
+                            </h3>
+                            <button onclick="copyToClipboard('k3-pseudocode-text')" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2.5 py-1 rounded transition">
+                                <i class="fa-regular fa-copy mr-1"></i> Salin
+                            </button>
+                        </div>
+                        <pre id="k3-pseudocode-text" class="bg-slate-900 p-4 rounded-xl text-xs font-mono text-emerald-300 leading-relaxed border border-slate-700 custom-scroll overflow-x-auto">
+ALGORITMA Perhitungan_Kelereng
+DEKLARASI:
+    aldi, budi, anto, agung, total : INTEGER
+
+ALGORITMA:
+    INPUT aldi
+    
+    budi &leftarrow; aldi - 15
+    anto &leftarrow; 2 * (aldi + budi)
+    agung &leftarrow; (aldi + budi + anto) - 5
+    total &leftarrow; aldi + budi + anto + agung
+    
+    OUTPUT budi, anto, agung, total</pre>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <h3 class="font-bold text-amber-400 text-sm uppercase tracking-wider flex items-center mb-3">
+                            <i class="fa-solid fa-align-left mr-2"></i> Penjelasan Deskripsi Narasi
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed space-y-2">
+                            Sistem menerima input jumlah kelereng <strong class="text-white">Aldi ($A$)</strong>. Dari pernyataan soal $A = B + 15$, kita menurunkan formula kelereng <strong class="text-white">Budi ($B = A - 15$)</strong>.
+                            <br><br>
+                            Selanjutnya, kelereng <strong class="text-white">Anto</strong> dihitung dari dua kali penjumlahan kelereng Aldi dan Budi ($An = 2 \times (A + B)$). Terakhir, kelereng <strong class="text-white">Agung</strong> dihitung dari total kelereng ketiganya dikurangi 5 ($Ag = A + B + An - 5$). Seluruh variabel dihitung secara bertahap dan berantai.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kasus-4-content" class="kasus-section hidden space-y-6">
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-2">
+                            <span>KASUS 4</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Kalkulator Tarif Parkir Kendaraan</h2>
+                        <p class="text-slate-400 text-sm mt-1">Hitung biaya berdasarkan jenis kendaraan (Motor / Mobil) dan lama durasi parkir.</p>
+                    </div>
+                </div>
+
+                <!-- Interactive Controls -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/50">
+                        <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">Jenis Kendaraan</label>
+                        <select id="k4-jenis" onchange="calculateKasus4()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-semibold focus:outline-none focus:border-sky-500">
+                            <option value="Motor">Motor (Rp3.000 + Rp2.000/jam)</option>
+                            <option value="Mobil">Mobil (Rp5.000 + Rp3.000/jam)</option>
+                        </select>
+                    </div>
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/50">
+                        <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">Lama Parkir (Jam)</label>
+                        <input type="number" id="k4-lama" value="3" min="1" oninput="calculateKasus4()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div class="bg-gradient-to-r from-indigo-950 to-slate-900 p-4 rounded-xl border border-indigo-500/40 flex flex-col justify-between">
+                        <span class="text-xs text-indigo-300 font-bold uppercase">Total Biaya Parkir</span>
+                        <div id="k4-total-display" class="text-2xl font-extrabold text-white font-mono">Rp 7.000</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flowchart, Pseudocode, Narasi -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                    <h3 class="font-bold text-slate-200 flex items-center mb-4">
+                        <i class="fa-solid fa-diagram-project text-sky-400 mr-2"></i> Flowchart Tarif Parkir
+                    </h3>
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/70 overflow-x-auto flex justify-center py-6">
+                        <div class="w-full max-w-sm flex flex-col items-center space-y-2 font-sans text-xs">
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-emerald-500 rounded-full text-center font-bold text-emerald-400">MULAI</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center">Input: jenis_kendaraan, lama_parkir</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2.5 bg-amber-950/40 border-2 border-amber-500/60 rounded-xl text-center font-semibold text-amber-300">
+                                jenis_kendaraan == "Motor"?
+                            </div>
+                            <div class="w-full flex justify-around text-[11px] text-slate-400">
+                                <span><i class="fa-solid fa-arrow-left text-emerald-400"></i> YA</span>
+                                <span>TIDAK (Mobil) <i class="fa-solid fa-arrow-right text-sky-400"></i></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 w-full">
+                                <div class="p-2 bg-slate-800 border border-slate-600 rounded-xl text-[10px]">
+                                    IF lama &le; 1 THEN<br>&nbsp;biaya = 3000<br>ELSE<br>&nbsp;biaya = 3000 + (lama-1)*2000
+                                </div>
+                                <div class="p-2 bg-slate-800 border border-slate-600 rounded-xl text-[10px]">
+                                    IF lama &le; 1 THEN<br>&nbsp;biaya = 5000<br>ELSE<br>&nbsp;biaya = 5000 + (lama-1)*3000
+                                </div>
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2 bg-slate-800 border-2 border-purple-500/60 rounded-xl text-center text-purple-300">Tampilkan total_biaya</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-rose-500 rounded-full text-center font-bold text-rose-400">SELESAI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-sky-400 text-sm uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-code mr-2"></i> Algoritma / Pseudocode
+                            </h3>
+                            <button onclick="copyToClipboard('k4-pseudocode-text')" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2.5 py-1 rounded transition">
+                                <i class="fa-regular fa-copy mr-1"></i> Salin
+                            </button>
+                        </div>
+                        <pre id="k4-pseudocode-text" class="bg-slate-900 p-4 rounded-xl text-xs font-mono text-emerald-300 leading-relaxed border border-slate-700 custom-scroll overflow-x-auto">
+ALGORITMA Hitung_Tarif_Parkir
+DEKLARASI:
+    jenis_kendaraan : STRING
+    lama_parkir, total_biaya : INTEGER
+
+ALGORITMA:
+    INPUT jenis_kendaraan, lama_parkir
+    
+    IF jenis_kendaraan == "Motor" THEN
+        IF lama_parkir &le; 1 THEN
+            total_biaya &leftarrow; 3000
+        ELSE
+            total_biaya &leftarrow; 3000 + (lama_parkir - 1) * 2000
+        ENDIF
+    ELSE IF jenis_kendaraan == "Mobil" THEN
+        IF lama_parkir &le; 1 THEN
+            total_biaya &leftarrow; 5000
+        ELSE
+            total_biaya &leftarrow; 5000 + (lama_parkir - 1) * 3000
+        ENDIF
+    ENDIF
+    
+    OUTPUT total_biaya</pre>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <h3 class="font-bold text-amber-400 text-sm uppercase tracking-wider flex items-center mb-3">
+                            <i class="fa-solid fa-align-left mr-2"></i> Penjelasan Deskripsi Narasi
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed space-y-2">
+                            Program menghitung tarif parkir berdasarkan jenis kendaraan dan durasi parkir. Pertama, program memeriksa jenis kendaraan melalui kondisi percabangan.
+                            <br><br>
+                            Jika kendaraan adalah <strong class="text-white">Motor</strong>, jam pertama dikenakan biaya Rp3.000. Setiap jam berikutnya ditambah Rp2.000 per jam. Jika kendaraan adalah <strong class="text-white">Mobil</strong>, jam pertama dikenakan biaya Rp5.000 dan jam berikutnya ditambah Rp3.000 per jam. Total tarif akhir kemudian dihitung dan ditampilkan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kasus-5-content" class="kasus-section hidden space-y-6">
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold mb-2">
+                            <span>KASUS 5</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Program Kasir Restoran & Diskon 10%</h2>
+                        <p class="text-slate-400 text-sm mt-1">Total belanja > Rp200.000 secara otomatis mendapatkan potongan diskon 10%.</p>
+                    </div>
+                </div>
+
+                <!-- Interactive Cashier Inputs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
+                        <h4 class="text-xs font-bold text-sky-400 uppercase tracking-wider">Item Makanan</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Harga Makanan (Rp)</label>
+                                <input type="number" id="k5-harga-mkn" value="50000" oninput="calculateKasus5()" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-xs font-mono text-white">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Jumlah Porsi</label>
+                                <input type="number" id="k5-jml-mkn" value="3" oninput="calculateKasus5()" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-xs font-mono text-white">
+                            </div>
+                        </div>
+
+                        <h4 class="text-xs font-bold text-sky-400 uppercase tracking-wider pt-2">Item Minuman</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Harga Minuman (Rp)</label>
+                                <input type="number" id="k5-harga-mnm" value="25000" oninput="calculateKasus5()" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-xs font-mono text-white">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Jumlah Gelas</label>
+                                <input type="number" id="k5-jml-mnm" value="3" oninput="calculateKasus5()" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-xs font-mono text-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Summary -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-rose-500/30 flex flex-col justify-between font-mono text-xs">
+                        <div>
+                            <div class="border-b border-dashed border-slate-700 pb-2 mb-3 text-center text-slate-400 font-bold">NOTA TRANSAKSI RESTORAN</div>
+                            <div class="space-y-1.5 text-slate-300">
+                                <div class="flex justify-between">
+                                    <span>Subtotal Makanan:</span>
+                                    <span id="k5-sub-mkn" class="text-white">Rp 150.000</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Subtotal Minuman:</span>
+                                    <span id="k5-sub-mnm" class="text-white">Rp 75.000</span>
+                                </div>
+                                <div class="flex justify-between pt-2 border-t border-slate-800 font-bold">
+                                    <span>Total Pembelian:</span>
+                                    <span id="k5-total-beli" class="text-amber-400">Rp 225.000</span>
+                                </div>
+                                <div class="flex justify-between text-emerald-400">
+                                    <span>Diskon (10%):</span>
+                                    <span id="k5-diskon">- Rp 22.500</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-3 border-t border-dashed border-slate-700 flex justify-between items-center">
+                            <span class="font-bold text-white uppercase">TOTAL BAYAR:</span>
+                            <span id="k5-total-bayar" class="text-xl font-extrabold text-emerald-400">Rp 202.500</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flowchart, Pseudocode, Narasi -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                    <h3 class="font-bold text-slate-200 flex items-center mb-4">
+                        <i class="fa-solid fa-diagram-project text-sky-400 mr-2"></i> Flowchart Kasir Restoran
+                    </h3>
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/70 overflow-x-auto flex justify-center py-6">
+                        <div class="w-full max-w-sm flex flex-col items-center space-y-2 font-sans text-xs">
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-emerald-500 rounded-full text-center font-bold text-emerald-400">MULAI</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center">Input item makanan & minuman</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-64 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center font-mono text-[11px]">total_pembelian = sub_makanan + sub_minuman</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2.5 bg-amber-950/40 border-2 border-amber-500/60 rounded-xl text-center font-semibold text-amber-300">
+                                total_pembelian > 200.000?
+                            </div>
+                            <div class="w-full flex justify-around text-[11px] text-slate-400">
+                                <span><i class="fa-solid fa-arrow-left text-emerald-400"></i> YA</span>
+                                <span>TIDAK <i class="fa-solid fa-arrow-right text-rose-400"></i></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 w-full">
+                                <div class="p-2 bg-emerald-950/40 border border-emerald-500/50 rounded-xl text-center text-emerald-300 text-[11px]">
+                                    diskon = 10% * total
+                                </div>
+                                <div class="p-2 bg-rose-950/40 border border-rose-500/50 rounded-xl text-center text-rose-300 text-[11px]">
+                                    diskon = 0
+                                </div>
+                            </div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-60 p-2 bg-slate-800 border-2 border-slate-600 rounded-xl text-center font-mono text-[11px]">total_bayar = total_pembelian - diskon</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-56 p-2 bg-slate-800 border-2 border-purple-500/60 rounded-xl text-center text-purple-300">Tampilkan Nota & Total Bayar</div>
+                            <div class="text-slate-500"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="w-40 py-2 bg-slate-800 border-2 border-rose-500 rounded-full text-center font-bold text-rose-400">SELESAI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-sky-400 text-sm uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-code mr-2"></i> Algoritma / Pseudocode
+                            </h3>
+                            <button onclick="copyToClipboard('k5-pseudocode-text')" class="text-slate-400 hover:text-white text-xs bg-slate-700 px-2.5 py-1 rounded transition">
+                                <i class="fa-regular fa-copy mr-1"></i> Salin
+                            </button>
+                        </div>
+                        <pre id="k5-pseudocode-text" class="bg-slate-900 p-4 rounded-xl text-xs font-mono text-emerald-300 leading-relaxed border border-slate-700 custom-scroll overflow-x-auto">
+ALGORITMA Kasir_Restoran
+DEKLARASI:
+    harga_makanan, jumlah_makanan, subtotal_makanan : INTEGER
+    harga_minuman, jumlah_minuman, subtotal_minuman : INTEGER
+    total_pembelian, diskon, total_bayar : REAL
+
+ALGORITMA:
+    INPUT harga_makanan, jumlah_makanan
+    INPUT harga_minuman, jumlah_minuman
+    
+    subtotal_makanan &leftarrow; harga_makanan * jumlah_makanan
+    subtotal_minuman &leftarrow; harga_minuman * jumlah_minuman
+    total_pembelian &leftarrow; subtotal_makanan + subtotal_minuman
+    
+    IF total_pembelian > 200000 THEN
+        diskon &leftarrow; 0.10 * total_pembelian
+    ELSE
+        diskon &leftarrow; 0
+    ENDIF
+    
+    total_bayar &leftarrow; total_pembelian - diskon
+    OUTPUT total_pembelian, diskon, total_bayar</pre>
+                    </div>
+
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl">
+                        <h3 class="font-bold text-amber-400 text-sm uppercase tracking-wider flex items-center mb-3">
+                            <i class="fa-solid fa-align-left mr-2"></i> Penjelasan Deskripsi Narasi
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed space-y-2">
+                            Program kasir restoran menghitung total pembayaran pesanan pelanggan. Pengguna memasukkan data berupa nama menu, harga satuan, dan jumlah kuantitas untuk item makanan serta minuman.
+                            <br><br>
+                            Sistem menghitung subtotal makanan dan minuman, kemudian menjumlahkan keduanya untuk mendapatkan <strong class="text-white">Total Pembelian</strong>. Selanjutnya, sistem menguji kondisi diskon: jika total pembelian melebihi <strong class="text-white">Rp200.000</strong>, pelanggan mendapatkan diskon sebesar <strong class="text-emerald-400">10%</strong> dari total pembelian. Jika tidak, diskon adalah 0. Akhirnya, sistem menghitung <strong class="text-white">Total Bayar</strong> (Total Pembelian dikurangi Diskon) dan menampilkan rincian nota transaksi.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 sm:p-6 shadow-xl mt-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center">
+                        <i class="fa-brands fa-python text-amber-400 mr-2 text-xl"></i> Kode Program Python & Terminal Eksekusi
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Lihat kode Python untuk kasus yang sedang dipilih dan jalankan hasilnya di terminal interaktif.</p>
+                </div>
+                <button onclick="runPythonScript()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-lg shadow-emerald-600/20">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Jalankan Script Python</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+                <!-- Code Editor View -->
+                <div class="lg:col-span-7 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800 px-4 py-2 border-b border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                            <span id="python-filename" class="text-xs text-slate-400 font-mono ml-2">kasus_1_kelulusan.py</span>
+                        </div>
+                        <button onclick="copyPythonCode()" class="text-slate-400 hover:text-white text-xs flex items-center space-x-1 bg-slate-700 px-2.5 py-1 rounded transition">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Salin Kode</span>
+                        </button>
+                    </div>
+                    <pre id="python-code-display" class="p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed custom-scroll h-[300px]"></pre>
+                </div>
+
+                <!-- Terminal Output View -->
+                <div class="lg:col-span-5 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl flex flex-col">
+                    <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center justify-between">
+                        <div class="text-xs text-slate-400 font-mono flex items-center">
+                            <i class="fa-solid fa-terminal text-emerald-400 mr-2"></i> Terminal Output
+                        </div>
+                    </div>
+                    <div id="terminal-output" class="p-4 text-xs font-mono text-emerald-400 custom-scroll h-[300px] overflow-y-auto leading-relaxed space-y-1">
+                        <div class="text-slate-500"># Klik 'Jalankan Script Python' untuk melihat eksekusi...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 border-t border-slate-800 py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Simulasi Algoritma, Flowchart & Pemrograman Python 5 Kasus &copy; 2026 - Solusi Interaktif
+        </div>
+    </footer>
+
+    <script>
+        let currentKasus = 1;
+
+        const pythonScripts = {
+            1: `# KASUS 1: Penentuan Kelulusan Mahasiswa
+tugas = 80
+uts = 70
+uas = 50
+
+# Menghitung Nilai Akhir
+nilai_akhir = (0.3 * tugas) + (0.3 * uts) + (0.4 * uas)
+
+# Penentuan Status
+if nilai_akhir >= 60:
+    status = "LULUS"
+else:
+    status = "TIDAK LULUS"
+
+print(f"Nilai Akhir : {nilai_akhir:.1f}")
+print(f"Status      : {status}")`,
+
+            2: `# KASUS 2: Penarikan Uang Mesin ATM
+pin_benar = "123456"
+saldo = 1000000
+
+pin_input = "123456"  # Input dari nasabah
+jumlah_tarik = 300000
+
+if pin_input == pin_benar:
+    if jumlah_tarik <= saldo:
+        saldo -= jumlah_tarik
+        print("Penarikan Berhasil. Silakan ambil uang Anda.")
+        print(f"Sisa Saldo Anda: Rp {saldo:,}")
+    else:
+        print("Saldo Tidak Mencukupi")
+else:
+    print("PIN Salah. Transaksi Dibatalkan.")`,
+
+            3: `# KASUS 3: Kalkulator Kelereng Aldi, Budi, Anto & Agung
+aldi = 30
+
+budi = aldi - 15
+anto = 2 * (aldi + budi)
+agung = (aldi + budi + anto) - 5
+total = aldi + budi + anto + agung
+
+print(f"Kelereng Aldi  : {aldi}")
+print(f"Kelereng Budi  : {budi}")
+print(f"Kelereng Anto  : {anto}")
+print(f"Kelereng Agung : {agung}")
+print(f"Total Kelereng : {total}")`,
+
+            4: `# KASUS 4: Tarif Parkir Kendaraan
+jenis_kendaraan = "Motor"  # Pilih: "Motor" atau "Mobil"
+lama_parkir = 3            # jam
+
+if jenis_kendaraan == "Motor":
+    if lama_parkir <= 1:
+        total_biaya = 3000
+    else:
+        total_biaya = 3000 + (lama_parkir - 1) * 2000
+elif jenis_kendaraan == "Mobil":
+    if lama_parkir <= 1:
+        total_biaya = 5000
+    else:
+        total_biaya = 5000 + (lama_parkir - 1) * 3000
+
+print(f"Jenis Kendaraan : {jenis_kendaraan}")
+print(f"Lama Parkir     : {lama_parkir} Jam")
+print(f"Total Biaya     : Rp {total_biaya:,}")`,
+
+            5: `# KASUS 5: Kasir Restoran & Diskon
+harga_makanan = 50000
+jumlah_makanan = 3
+
+harga_minuman = 25000
+jumlah_minuman = 3
+
+subtotal_mkn = harga_makanan * jumlah_makanan
+subtotal_mnm = harga_minuman * jumlah_minuman
+total_pembelian = subtotal_mkn + subtotal_mnm
+
+# Diskon 10% jika total > Rp 200.000
+if total_pembelian > 200000:
+    diskon = 0.10 * total_pembelian
+else:
+    diskon = 0
+
+total_bayar = total_pembelian - diskon
+
+print(f"Total Pembelian : Rp {total_pembelian:,}")
+print(f"Diskon (10%)    : Rp {diskon:,.0f}")
+print(f"Total Bayar     : Rp {total_bayar:,.0f}")`
+        };
+
+        function switchKasus(num) {
+            currentKasus = num;
+            document.querySelectorAll('.kasus-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`kasus-${num}-content`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active-tab');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`btn-kasus-${num}`);
+            activeBtn.classList.add('active-tab');
+            activeBtn.classList.remove('text-slate-400');
+
+            updatePythonView();
+        }
+
+        function updatePythonView() {
+            const filenameEl = document.getElementById('python-filename');
+            const codeEl = document.getElementById('python-code-display');
+            
+            const filenames = {
+                1: 'kasus_1_kelulusan.py',
+                2: 'kasus_2_atm.py',
+                3: 'kasus_3_kelereng.py',
+                4: 'kasus_4_tarif_parkir.py',
+                5: 'kasus_5_kasir_restoran.py'
+            };
+
+            filenameEl.textContent = filenames[currentKasus];
+            codeEl.textContent = pythonScripts[currentKasus];
+            
+            document.getElementById('terminal-output').innerHTML = `<div class="text-slate-500"># Klik 'Jalankan Script Python' untuk melihat eksekusi...</div>`;
+        }
+
+        // Calculations for Kasus 1
+        function calculateKasus1() {
+            const tugas = parseFloat(document.getElementById('k1-tugas').value) || 0;
+            const uts = parseFloat(document.getElementById('k1-uts').value) || 0;
+            const uas = parseFloat(document.getElementById('k1-uas').value) || 0;
+
+            const nilaiAkhir = (0.3 * tugas) + (0.3 * uts) + (0.4 * uas);
+            document.getElementById('k1-nilai-akhir').textContent = nilaiAkhir.toFixed(1);
+
+            const badge = document.getElementById('k1-status-badge');
+            const resultBox = document.getElementById('k1-result-box');
+
+            if (nilaiAkhir >= 60) {
+                badge.textContent = "LULUS";
+                badge.className = "px-4 py-2 rounded-xl text-sm font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                resultBox.className = "mt-4 p-4 rounded-xl border flex items-center justify-between transition-all duration-300 bg-emerald-950/40 border-emerald-500/40";
+            } else {
+                badge.textContent = "TIDAK LULUS";
+                badge.className = "px-4 py-2 rounded-xl text-sm font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/40";
+                resultBox.className = "mt-4 p-4 rounded-xl border flex items-center justify-between transition-all duration-300 bg-rose-950/40 border-rose-500/40";
+            }
+        }
+
+        // Calculations for Kasus 2
+        function simulasikanATM() {
+            const pinInput = document.getElementById('k2-pin-input').value;
+            const jumlahTarik = parseFloat(document.getElementById('k2-tarik-input').value) || 0;
+            let saldo = parseFloat(document.getElementById('k2-saldo-input').value) || 1000000;
+            const logEl = document.getElementById('k2-screen-log');
+
+            if (pinInput !== "123456") {
+                logEl.innerHTML = `
+                    <div class="text-rose-400 font-bold">> ERROR: PIN SALAH!</div>
+                    <div class="text-slate-400">Akses ditolak. Silakan periksa PIN Anda kembali.</div>
+                `;
+                showToast("PIN ATM Salah!", "error");
+                return;
+            }
+
+            if (jumlahTarik > saldo) {
+                logEl.innerHTML = `
+                    <div class="text-amber-400 font-bold">> VERIFIKASI SALDO: GAGAL</div>
+                    <div class="text-rose-400 font-bold text-sm mt-1">"Saldo Tidak Mencukupi"</div>
+                    <div class="text-slate-400 mt-1">Penarikan Rp ${jumlahTarik.toLocaleString('id-ID')} melebihi saldo.</div>
+                `;
+                showToast("Saldo Tidak Mencukupi", "warning");
+            } else {
+                saldo -= jumlahTarik;
+                document.getElementById('k2-saldo-input').value = saldo;
+                document.getElementById('k2-display-sisa-saldo').textContent = "Rp " + saldo.toLocaleString('id-ID');
+
+                logEl.innerHTML = `
+                    <div class="text-emerald-400 font-bold">> TRANSAKSI BERHASIL!</div>
+                    <div class="text-slate-200 mt-1">Penarikan Uang: Rp ${jumlahTarik.toLocaleString('id-ID')}</div>
+                    <div class="text-emerald-300 font-bold mt-1">Silakan ambil uang tunai Anda.</div>
+                `;
+                showToast("Penarikan Berhasil!", "success");
+            }
+        }
+
+        // Calculations for Kasus 3
+        function calculateMarbles() {
+            const aldi = parseInt(document.getElementById('aldi-slider').value) || 0;
+            document.getElementById('aldi-display').textContent = aldi;
+
+            const budi = aldi - 15;
+            const anto = 2 * (aldi + budi);
+            const agung = (aldi + budi + anto) - 5;
+
+            document.getElementById('m-aldi').textContent = aldi;
+            document.getElementById('m-budi').textContent = budi;
+            document.getElementById('m-anto').textContent = anto;
+            document.getElementById('m-agung').textContent = agung;
+            document.querySelectorAll('.val-aldi-formula').forEach(e => e.textContent = aldi);
+        }
+
+        // Calculations for Kasus 4
+        function calculateKasus4() {
+            const jenis = document.getElementById('k4-jenis').value;
+            const lama = parseInt(document.getElementById('k4-lama').value) || 0;
+            let total = 0;
+
+            if (jenis === 'Motor') {
+                total = lama <= 1 ? 3000 : 3000 + (lama - 1) * 2000;
+            } else {
+                total = lama <= 1 ? 5000 : 5000 + (lama - 1) * 3000;
+            }
+
+            document.getElementById('k4-total-display').textContent = "Rp " + total.toLocaleString('id-ID');
+        }
+
+        // Calculations for Kasus 5
+        function calculateKasus5() {
+            const hgMkn = parseFloat(document.getElementById('k5-harga-mkn').value) || 0;
+            const jmlMkn = parseFloat(document.getElementById('k5-jml-mkn').value) || 0;
+            const hgMnm = parseFloat(document.getElementById('k5-harga-mnm').value) || 0;
+            const jmlMnm = parseFloat(document.getElementById('k5-jml-mnm').value) || 0;
+
+            const subMkn = hgMkn * jmlMkn;
+            const subMnm = hgMnm * jmlMnm;
+            const totalBeli = subMkn + subMnm;
+
+            let diskon = 0;
+            if (totalBeli > 200000) {
+                diskon = 0.10 * totalBeli;
+            }
+
+            const totalBayar = totalBeli - diskon;
+
+            document.getElementById('k5-sub-mkn').textContent = "Rp " + subMkn.toLocaleString('id-ID');
+            document.getElementById('k5-sub-mnm').textContent = "Rp " + subMnm.toLocaleString('id-ID');
+            document.getElementById('k5-total-beli').textContent = "Rp " + totalBeli.toLocaleString('id-ID');
+            document.getElementById('k5-diskon').textContent = "- Rp " + diskon.toLocaleString('id-ID');
+            document.getElementById('k5-total-bayar').textContent = "Rp " + totalBayar.toLocaleString('id-ID');
+        }
+
+        function runPythonScript() {
+            const term = document.getElementById('terminal-output');
+            const filename = document.getElementById('python-filename').textContent;
+            
+            term.innerHTML = `<div class="text-slate-500">$ python3 ${filename}</div>`;
+
+            setTimeout(() => {
+                if (currentKasus === 1) {
+                    const tugas = parseFloat(document.getElementById('k1-tugas').value) || 80;
+                    const uts = parseFloat(document.getElementById('k1-uts').value) || 70;
+                    const uas = parseFloat(document.getElementById('k1-uas').value) || 50;
+                    const na = (0.3 * tugas) + (0.3 * uts) + (0.4 * uas);
+                    const status = na >= 60 ? "LULUS" : "TIDAK LULUS";
+
+                    term.innerHTML += `<div class="text-slate-300">Nilai Akhir : ${na.toFixed(1)}</div>`;
+                    term.innerHTML += `<div class="${na >= 60 ? 'text-emerald-400' : 'text-rose-400'} font-bold">Status      : ${status}</div>`;
+                } 
+                else if (currentKasus === 2) {
+                    const pin = document.getElementById('k2-pin-input').value;
+                    const tarik = parseFloat(document.getElementById('k2-tarik-input').value) || 300000;
+                    let saldo = parseFloat(document.getElementById('k2-saldo-input').value) || 1000000;
+
+                    if (pin === "123456") {
+                        if (tarik <= saldo) {
+                            saldo -= tarik;
+                            term.innerHTML += `<div class="text-emerald-300">Penarikan Berhasil. Silakan ambil uang Anda.</div>`;
+                            term.innerHTML += `<div class="text-white">Sisa Saldo Anda: Rp ${saldo.toLocaleString('id-ID')}</div>`;
+                        } else {
+                            term.innerHTML += `<div class="text-rose-400 font-bold">Saldo Tidak Mencukupi</div>`;
+                        }
+                    } else {
+                        term.innerHTML += `<div class="text-rose-400 font-bold">PIN Salah. Transaksi Dibatalkan.</div>`;
+                    }
+                }
+                else if (currentKasus === 3) {
+                    const aldi = parseInt(document.getElementById('aldi-slider').value) || 30;
+                    const budi = aldi - 15;
+                    const anto = 2 * (aldi + budi);
+                    const agung = (aldi + budi + anto) - 5;
+                    const total = aldi + budi + anto + agung;
+
+                    term.innerHTML += `<div class="text-slate-300">Kelereng Aldi  : ${aldi}</div>`;
+                    term.innerHTML += `<div class="text-slate-300">Kelereng Budi  : ${budi}</div>`;
+                    term.innerHTML += `<div class="text-slate-300">Kelereng Anto  : ${anto}</div>`;
+                    term.innerHTML += `<div class="text-slate-300">Kelereng Agung : ${agung}</div>`;
+                    term.innerHTML += `<div class="text-emerald-400 font-bold border-t border-slate-800 pt-1">Total Kelereng : ${total}</div>`;
+                }
+                else if (currentKasus === 4) {
+                    const jenis = document.getElementById('k4-jenis').value;
+                    const lama = parseInt(document.getElementById('k4-lama').value) || 3;
+                    let total = 0;
+                    if (jenis === 'Motor') {
+                        total = lama <= 1 ? 3000 : 3000 + (lama - 1) * 2000;
+                    } else {
+                        total = lama <= 1 ? 5000 : 5000 + (lama - 1) * 3000;
+                    }
+
+                    term.innerHTML += `<div class="text-slate-300">Jenis Kendaraan : ${jenis}</div>`;
+                    term.innerHTML += `<div class="text-slate-300">Lama Parkir     : ${lama} Jam</div>`;
+                    term.innerHTML += `<div class="text-emerald-400 font-bold">Total Biaya     : Rp ${total.toLocaleString('id-ID')}</div>`;
+                }
+                else if (currentKasus === 5) {
+                    const hgMkn = parseFloat(document.getElementById('k5-harga-mkn').value) || 50000;
+                    const jmlMkn = parseFloat(document.getElementById('k5-jml-mkn').value) || 3;
+                    const hgMnm = parseFloat(document.getElementById('k5-harga-mnm').value) || 25000;
+                    const jmlMnm = parseFloat(document.getElementById('k5-jml-mnm').value) || 3;
+
+                    const totalBeli = (hgMkn * jmlMkn) + (hgMnm * jmlMnm);
+                    const diskon = totalBeli > 200000 ? 0.10 * totalBeli : 0;
+                    const totalBayar = totalBeli - diskon;
+
+                    term.innerHTML += `<div class="text-slate-300">Total Pembelian : Rp ${totalBeli.toLocaleString('id-ID')}</div>`;
+                    term.innerHTML += `<div class="text-amber-400">Diskon (10%)    : Rp ${diskon.toLocaleString('id-ID')}</div>`;
+                    term.innerHTML += `<div class="text-emerald-400 font-bold border-t border-slate-800 pt-1">Total Bayar     : Rp ${totalBayar.toLocaleString('id-ID')}</div>`;
+                }
+
+                term.scrollTop = term.scrollHeight;
+            }, 250);
+        }
+
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).textContent;
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast("Berhasil disalin ke clipboard!", "success");
+        }
+
+        function copyPythonCode() {
+            copyToClipboard('python-code-display');
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast-notification');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.textContent = msg;
+            if (type === 'error') {
+                toastIcon.className = "fa-solid fa-circle-xmark text-rose-400 text-lg";
+            } else if (type === 'warning') {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-amber-400 text-lg";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        window.onload = function() {
+            calculateKasus1();
+            calculateMarbles();
+            calculateKasus4();
+            calculateKasus5();
+            updatePythonView();
+        };
+    </script>
+</body>
+</html>
